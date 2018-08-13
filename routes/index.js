@@ -18,7 +18,55 @@ mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+router.get("/users", function(req, res){
+  console.log("token - "+ req.headers['x-access-token']);
+  console.log("Decoded - "+  res.locals.decoded);
 
+  res.json({sucess: true, message: "logou"});
+});
+
+router.get("/users/verificar/:id", function(req, res){
+  console.log("Entrnou no verificar usuario - "+ req.params.id);
+  console.log("Senha retornada ", req.headers['senha']);
+  User.findOne({
+        login: req.params.id},
+        
+        function(err, user){
+          if (err) throw err;
+          if(!user){
+            console.log("Não achou o usuario");
+            res.json({ success: false, message: 'Usuário não encontrado.'});
+
+          }else if(user){
+            console.log("Senha enviada - "+ req.headers['senha']+"\nSenha do usuario - "+ user.senha);
+            if(user.senha != req.headers['senha']){
+              console.log("Senha errada - "+ user.login);
+              res.json({ success: false, message: 'Senha errada.' });
+
+            }else{
+                console.log("Usuario encontrado - "+ user.login);
+                res.json({success: true, message: user.email});
+               /*const payload = {
+                email: user.email
+              };
+
+               // console.log("Segredo - "+ process.env.SECRET);
+                var token = jwt.sign(payload, config.secret, {
+                    expiresIn: 300 // expires in 24 hours
+                 });
+
+                res.json({
+                  success: true,
+                  message: 'Logado com sucesso',
+                  token: token
+                });*/
+            }
+          }
+        }
+      );
+
+
+});
 /*
 router.get("/", function(req, res){
     console.log("Entrou no index");
