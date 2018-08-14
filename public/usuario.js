@@ -1,4 +1,5 @@
 $(document).ready(function(){
+  console.log("------------Carregando usuario.js -----------");
 	var usuarios = [];
 		  function iteraLista(value, index, array){
 			console.log("Nome - "+ value.nome + array[index]);
@@ -7,16 +8,16 @@ $(document).ready(function(){
 			var email = $("<td></td>").text(value.email).appendTo(row);
 			
 		}
-
+    console.log("token no usuarios.js - "+ token);
 		$.ajax({
    				
-   				url: window.location.href+ 'usersView',
+   				url: window.location.href+ 'users',
    						headers: {
    							'x-access-token': token,
    							'index': 'index'},
    						success : function(data, status){
    						console.log("Status - "+ status);
-                        console.log("Sucess - "+ data.success);		
+                        console.log("Success - "+ data.success);		
                
                 if(data.success){
                   //window.sessionStorage.setItem("token", null);

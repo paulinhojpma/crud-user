@@ -15,7 +15,7 @@ app.engine('html', require('ejs').renderFile);
 //app.set('views', path.join(__dirname, 'views'));
 app.set('views', path.join(__dirname, 'view'));
 app.set('view engine', 'html');
-app.use(express.static(path.join(__dirname, 'public')));
+app.use("/users/public", express.static(path.join(__dirname, 'public')));
 var port = process.env.PORT || 8080; 
 //mongoose.connect(config.database , { useNewUrlParser: true }); 
 app.set('superSecret', config.secret); 

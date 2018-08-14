@@ -33,18 +33,18 @@ router.get("/users", function(req, res){
 
       });
 
-  res.json({success: true, message: "logou"});
+  //res.json({success: true, message: "logou"});
 });
 
 
 router.get("/users/usersView", function(req, res){
     console.log("Entrou no usersView");
     //res.setHeader('Content-Type', 'text/html');
-     res.status(200)
-      res.sendFile('/usuarios.html');
+     //res.status(200)
+      //res.sendFile('/usuarios.html');
       
-      //res.render("usuarios");
-      res.end();
+      res.render("usuarios");
+     // res.end();
 
 });
 
