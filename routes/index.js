@@ -39,8 +39,12 @@ router.get("/users", function(req, res){
 
 router.get("/users/usersView", function(req, res){
     console.log("Entrou no usersView");
-    res.setHeader('Content-Type', 'text/html');
-    res.send("usuarios");
+    //res.setHeader('Content-Type', 'text/html');
+     res.status(200)
+      res.sendFile('/usuarios.html');
+      
+      //res.render("usuarios");
+      res.end();
 
 });
 
