@@ -19,11 +19,31 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 router.get("/users", function(req, res){
-  console.log("token - "+ req.headers['x-access-token']);
-  console.log("Decoded - "+  res.locals.decoded);
+  console.log("decoded - "+ req.headers['x-access-token']);
+  //console.log("Decoded - "+  req.decoded);
+      User.find({}, function(err, users){
+        if(err){
+          console.log(err);
+        }else{
+          console.log("Primeiro usuario - "+ users[0]);
+          res.json({success: true,
+                     message: "Usuarios retornados",
+                      usuarios: users});
+        }
 
-  res.json({sucess: true, message: "logou"});
+      });
+
+  res.json({success: true, message: "logou"});
 });
+
+
+router.get("/users/usersView", function(req, res){
+    console.log("Entrou no usersView");
+    res.setHeader('Content-Type', 'text/html');
+    res.send("usuarios");
+
+});
+
 
 router.get("/users/verificar/:id", function(req, res){
   console.log("Entrnou no verificar usuario - "+ req.params.id);
