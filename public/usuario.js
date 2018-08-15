@@ -1,11 +1,35 @@
 $(document).ready(function(){
   console.log("------------Carregando usuario.js -----------");
 
-  	var usuarioAtual= {};
+  	var userAtual= {};
 	var usuarios = [];
+	var rows = [];
+			
 
-			function mostraUsuario(email){
-				console.log("Email no mostraUsuario - "+ email);
+
+		  function iteraLista(value, index, array){
+			console.log("Nome - "+ value.nome);
+			var row = $("<tr></tr>").appendTo("#tabela");
+			var nome = $("<td></td>").text(value.nome).appendTo(row);
+			var email = $("<td></td>").text(value.email).appendTo(row);
+			var nascimento = $("<td></td>").text(formatDate(value.nascimento)).appendTo(row);
+			var login = $("<td></td>").text(value.login).appendTo(row);
+			row.attr("id", value.email);
+			rows.push(row);
+
+			/*row.click(function(){
+				
+				monstraUsuario(value.email);
+
+			});*/
+			
+		}
+
+		function addEventoUsuario(value, index, array){
+			console.log("Entrou no  addEventoUsuario- "+ value.attr('id'));
+			value.click(function(){
+				
+				console.log("Email no mostraUsuario - "+ value.attr('id'));
 				$.ajax({
 						url: window.location.href + "users/userView",
 							headers: {
@@ -22,7 +46,7 @@ $(document).ready(function(){
 							$("#user").html();
 							
 							$.ajax({
-									url: window.location.href + "users/"+ email,
+									url: window.location.href + "users/"+ value.attr('id'),
 									headers: {
 	   									'x-access-token': token,
 	   									'id': 'email'},
@@ -35,22 +59,9 @@ $(document).ready(function(){
 
 							});
 						}
-				});
-			}
-
-
-		  function iteraLista(value, index, array){
-			console.log("Nome - "+ value.nome);
-			var row = $("<tr></tr>").appendTo("#tabela");
-			var nome = $("<td></td>").text(value.nome).appendTo(row);
-			var email = $("<td></td>").text(value.email).appendTo(row);
-			var nascimento = $("<td></td>").text(formatDate(value.nascimento)).appendTo(row);
-			var login = $("<td></td>").text(value.login).appendTo(row);
-			row.click(function(){
-				tmonstraUsuario(value.email);
+					});
 
 			});
-			
 		}
 
 		function carregaUsuario(){
@@ -94,6 +105,7 @@ $(document).ready(function(){
 			                  console.log(data.message);
 			                  var arr = data.usuarios;
 			                  arr.forEach(iteraLista);
+			                  rows.forEach(addEventoUsuario);
 			                }
    							
                  			//console.log(data.message);
