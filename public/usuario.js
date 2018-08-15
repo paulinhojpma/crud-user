@@ -7,7 +7,7 @@ $(document).ready(function(){
 			
 
 
-		  function iteraLista(value, index, array){
+		  function iteraListaUsuarios(value, index, array){
 			console.log("Nome - "+ value.nome);
 			var row = $("<tr></tr>").appendTo("#tabela");
 			var nome = $("<td></td>").text(value.nome).appendTo(row);
@@ -15,14 +15,7 @@ $(document).ready(function(){
 			var nascimento = $("<td></td>").text(formatDate(value.nascimento)).appendTo(row);
 			var login = $("<td></td>").text(value.login).appendTo(row);
 			row.attr("id", value.email);
-			rows.push(row);
-
-			/*row.click(function(){
-				
-				monstraUsuario(value.email);
-
-			});*/
-			
+			rows.push(row);		
 		}
 
     function succesUserGet(id){
@@ -51,22 +44,10 @@ $(document).ready(function(){
     function succesUserHtml(data, status, id){
         console.log("Status - "+ status);
         console.log("usuario.hrml - "+ status);
-        userAtual={};
+        userAtual = {};
         
         $("#user").html(data);
-        succesUserGet(id);
-        /*$.ajax({
-            url: window.location.href + "users/"+ id,
-            headers: {
-                'x-access-token': token,
-                'id': 'email'},
-              success: function(data, status,){
-                  succesUserGet(data, status);
-                
-              }
-
-
-        });*/
+        succesUserGet(id);     
 
     }
 
@@ -91,8 +72,7 @@ $(document).ready(function(){
                       succesUserHtml(data, status,  value.attr('id'));
                     }else{
                       succesUserGet(value.attr('id'));
-                    }
-    							 
+                    }  							 
     							
     						}
     					});
@@ -142,7 +122,7 @@ $(document).ready(function(){
 			                  //window.sessionStorage.setItem("token", null);
 			                  console.log(data.message);
 			                  var arr = data.usuarios;
-			                  arr.forEach(iteraLista);
+			                  arr.forEach(iteraListaUsuarios);
 			                  rows.forEach(addEventoUsuario);
 			                }
    							
