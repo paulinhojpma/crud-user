@@ -51,7 +51,7 @@ router.get("/users/userView", function(req,  res){
 router.get("/users/:id", function(req, res){
   console.log("Entrou no users/:id");
     User.findOne({
-      email: 
+      email: req.params.id
     },
       function(err, user){
         if(err) throw err;

@@ -3,15 +3,51 @@ $(document).ready(function(){
 
   	var usuarioAtual= {};
 	var usuarios = [];
+
+			function mostraUsuario(email){
+				console.log("Email no mostraUsuario - "+ email);
+				$.ajax({
+						url: window.location.href + "users/userView",
+							headers: {
+	   							'x-access-token': token,
+	   							'index': 'index'},
+						
+						
+							success: function(data, status){
+							
+							console.log("Status - "+ status);
+							
+							userAtual={};
+							
+							$("#user").html();
+							
+							$.ajax({
+									url: window.location.href + "users/"+ email,
+									headers: {
+	   									'x-access-token': token,
+	   									'id': 'email'},
+	   								success: function(data, status){
+	   									console.log("Usuario retornado" + data.user);
+	   									usuarioAtual = data.user;
+	   									carregaUsuario();
+	   								}
+
+
+							});
+						}
+				});
+			}
+
+
 		  function iteraLista(value, index, array){
 			console.log("Nome - "+ value.nome);
 			var row = $("<tr></tr>").appendTo("#tabela");
 			var nome = $("<td></td>").text(value.nome).appendTo(row);
 			var email = $("<td></td>").text(value.email).appendTo(row);
-			var nascimento = $("<td></td>").text(value.nascimento).appendTo(row);
+			var nascimento = $("<td></td>").text(formatDate(value.nascimento)).appendTo(row);
 			var login = $("<td></td>").text(value.login).appendTo(row);
 			row.click(function(){
-				monstraUsuario(value.email);
+				tmonstraUsuario(value.email);
 
 			});
 			
@@ -25,52 +61,21 @@ $(document).ready(function(){
 
 		}
 		function formatDate(date){
-			var day = date.getDate();
+			data = new Date(date);
+			var day = data.getDate();
 			var monthIndex;
-  			if(date.getMonth() > 9){
-  				monthIndex = date.getMonth()+1;
+  			if(data.getMonth() > 9){
+  				monthIndex = data.getMonth() + 1;
   			 }else{
-				monthIndex = "0"+ (date.getMonth()+1);
+				monthIndex = "0"+ (data.getMonth()+1);
   			 }
 
- 		 	var year = date.getFullYear();
+ 		 	var year = data.getFullYear();
  		 	console.log(day+"/"+monthIndex+"/" +year);
  		 	return day+"/"+monthIndex+"/"+year;
 		}
 
-		function mostraUsuario(email){
-			console.log("Email no mostraUsuario - "+ email);
-			$.ajax({
-					url: window.location.href + "users/userView",
-						headers: {
-   							'x-access-token': token,
-   							'index': 'index'},
-					
-					
-						success: function(data, status){
-						
-						console.log("Status - "+ status);
-						
-						userAtual={};
-						
-						$("#user").html();
-						
-						$.ajax({
-								url: window.location.href + "users/"+ email,
-								headers: {
-   									'x-access-token': token,
-   									'id': 'email'},
-   								success: function(data, status){
-   									console.log("Usuario retornado" + data.user);
-   									usuarioAtual = data.user;
-   									carregaUsuario();
-   								}
-
-
-						});
-					}
-				});
-		}
+		
    		 console.log("token no usuarios.js - "+ token);
 		
     	//Carrega lista de usuarios
