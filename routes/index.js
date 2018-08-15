@@ -49,11 +49,12 @@ router.get("/users/userView", function(req,  res){
 
 
 router.get("/users/:id", function(req, res){
-  console.log("Entrou no users/:id");
+  console.log("Entrou no users/:id - "+ req.params.id);
     User.findOne({
       email: req.params.id
     },
       function(err, user){
+        console.log("Usuario.retornado - "+user);
         if(err) throw err;
         if(user){
           res.json(user);
@@ -105,6 +106,28 @@ router.get("/users/verificar/:id", function(req, res){
       );
 
 
+});
+
+
+router.get('/setup', function(req, res) {
+
+  // create a sample user
+  var nick = new User({ 
+    nome: 'Ronaldo',
+    login: 'ronaldo',
+    senha: 'spcock',
+    nascimento: new Date("1978-05-18"),
+    email: 'ronaldo@spock'
+    
+  });
+
+  // save the sample user
+  nick.save(function(err) {
+    if (err) throw err;
+
+    console.log('User saved successfully');
+    res.json({ success: true });
+  });
 });
 /*
 router.get("/", function(req, res){

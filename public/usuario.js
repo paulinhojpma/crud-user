@@ -1,7 +1,7 @@
 $(document).ready(function(){
   console.log("------------Carregando usuario.js -----------");
 
-  	var userAtual= {};
+  var userAtual= {};
 	var usuarios = [];
 	var rows = [];
 			
@@ -25,50 +25,88 @@ $(document).ready(function(){
 			
 		}
 
+    function succesUserGet(id){
+      
+
+      $.ajax({
+            url: window.location.href + "users/"+ id,
+            headers: {
+                'x-access-token': token,
+                'id': 'email'},
+              success: function(data, status,){
+                  userAtual = data;
+                  console.log("Usuario retornado" + userAtual.login);
+                  carregaUsuario();
+                
+              }
+
+
+        });
+
+
+    }
+
+
+
+    function succesUserHtml(data, status, id){
+        console.log("Status - "+ status);
+        console.log("usuario.hrml - "+ status);
+        userAtual={};
+        
+        $("#user").html(data);
+        succesUserGet(id);
+        /*$.ajax({
+            url: window.location.href + "users/"+ id,
+            headers: {
+                'x-access-token': token,
+                'id': 'email'},
+              success: function(data, status,){
+                  succesUserGet(data, status);
+                
+              }
+
+
+        });*/
+
+    }
+
 		function addEventoUsuario(value, index, array){
 			console.log("Entrou no  addEventoUsuario- "+ value.attr('id'));
 			value.click(function(){
-				
-				console.log("Email no mostraUsuario - "+ value.attr('id'));
-				$.ajax({
-						url: window.location.href + "users/userView",
-							headers: {
-	   							'x-access-token': token,
-	   							'index': 'index'},
-						
-						
-							success: function(data, status){
-							
-							console.log("Status - "+ status);
-							
-							userAtual={};
-							
-							$("#user").html();
-							
-							$.ajax({
-									url: window.location.href + "users/"+ value.attr('id'),
-									headers: {
-	   									'x-access-token': token,
-	   									'id': 'email'},
-	   								success: function(data, status){
-	   									console.log("Usuario retornado" + data.user);
-	   									usuarioAtual = data.user;
-	   									carregaUsuario();
-	   								}
 
-
-							});
-						}
-					});
+			
+  				console.log("Email no addEventoUsuario - "+ value.attr('id'));
+          console.log("Id são iguais - " +  $("#usuario_email").attr('id') == value.attr('id'));
+        if($("#usuario_email").text() != value.attr('id')){   
+    				$.ajax({
+    						url: window.location.href + "users/userView",
+    							headers: {
+    	   							'x-access-token': token,
+    	   							'index': 'index'},
+    						
+    						
+    							success: function(data, status){
+                    console.log("Div user children - "+ $("#user").children().length);
+                    if($("#user").children().length == 0){
+                      succesUserHtml(data, status,  value.attr('id'));
+                    }else{
+                      succesUserGet(value.attr('id'));
+                    }
+    							 
+    							
+    						}
+    					});
+          }
 
 			});
 		}
 
 		function carregaUsuario(){
-			$("#titulo").text(user.nome);
-			$("#email").text(user.email);
-			$("#nascimento").text(formatDate(user.nascimento));
-			$("#login").text(user.login);
+			$("#usuario_titulo").text(userAtual.nome);
+			$("#usuario_email").text(userAtual.email);
+      $("#usuario_login").text(userAtual.login);
+			$("#usuario_nascimento").text(formatDate(userAtual.nascimento));
+			
 
 		}
 		function formatDate(date){
