@@ -38,13 +38,28 @@ router.get("/users", function(req, res){
 
 
 router.get("/users/usersView", function(req, res){
-    console.log("Entrou no usersView");
-    //res.setHeader('Content-Type', 'text/html');
-     //res.status(200)
-      //res.sendFile('/usuarios.html');
-      
+    console.log("Entrou no usersView");      
       res.render("usuarios");
-     // res.end();
+});
+
+router.get("/users/userView", function(req,  res){
+  console.log("Entrou no userView");
+  res.render("usuario");
+});
+
+
+router.get("/users/:id", function(req, res){
+  console.log("Entrou no users/:id");
+    User.findOne({
+      email: 
+    },
+      function(err, user){
+        if(err) throw err;
+        if(user){
+          res.json(user);
+        }
+      }
+    );
 
 });
 
