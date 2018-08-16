@@ -1,11 +1,11 @@
 $(document).ready(function(){
-  console.log("------------Carregando usuario.js -----------");
+      console.log("------------Carregando usuario.js -----------");
 
-  var userAtual= {};
-	var usuarios = [];
-	var rows = [];
+      var userAtual= {};
+    	var usuarios = [];
+    	var rows = [];
 			
-
+      carregaListaUsuarios();
 
 		  function iteraListaUsuarios(value, index, array){
 			console.log("Nome - "+ value.nome);
@@ -25,7 +25,7 @@ $(document).ready(function(){
 		}
 
     function succesUserGet(id){      
-
+      console.log("Entrou no succesUserGet");
       $.ajax({
             url: window.location.href + "users/"+ id,
             headers: {
@@ -45,6 +45,7 @@ $(document).ready(function(){
 
 
     function succesUserHtml(data, status){
+      console.log("Entrou no succesUserHtml");
         console.log("Status - "+ status);
         console.log("usuario.hrml - "+ status);	
         
@@ -55,12 +56,15 @@ $(document).ready(function(){
 
 		function addEventoUsuario(value, index, array){
 			console.log("Entrou no  addEventoUsuario- "+ value.attr('id'));
-			value.("$mostrar_"+index).click(function(){
+			let id = "#mostrar_"+index;
+      value.children(id).click(function(){
 
 			
-  			console.log("Email no addEventoUsuario - "+ value.attr('id'));
-          console.log("Id são iguais - " +  $("#usuario_email").attr('id') == value.attr('id'));
-        if($("#usuario_email").text() != value.attr('id')){   
+  			console.log("Email no escolhido - "+ value.attr('id'));
+        
+
+        if($("#user").children().length == 0 || $("#user").find("#usuario_titulo").length ==0){ 
+            console.log("Chamando a userView");  
     				$.ajax({
     						url: window.location.href + "users/userView",
     							headers: {
@@ -69,22 +73,22 @@ $(document).ready(function(){
     						
     						
 							success: function(data, status){
-			                   if(data.success){
+			                  
 			                   		console.log("Div user children - "+ $("#user").children().length);
-				                    if($("#user").children().length == 0){
+				                    
 				                      succesUserHtml(data, status);
 				                      succesUserGet(value.attr('id'));  
-				                    }else{
-				                      succesUserGet(value.attr('id'));
-				                    }
-			                   }else{
-			                   		
-
-			                   }
+				                    
+			                   
 			                    						 
 							
 							}
     					});
+          }else{
+            if($("#usuario_email").text() != value.attr('id')){
+                succesUserGet(value.attr('id'));    
+              }
+            
           }
 
 			});
@@ -93,11 +97,11 @@ $(document).ready(function(){
 		function carregaUsuario(){
 			$("#usuario_titulo").text(userAtual.nome);
 			$("#usuario_email").text(userAtual.email);
-      		$("#usuario_login").text(userAtual.login);
+      $("#usuario_login").text(userAtual.login);
 			$("#usuario_nascimento").text(formatDate(userAtual.nascimento));
-			
-
 		}
+
+
 		function formatDate(date){
 			data = new Date(date);
 			var day = data.getDate();
@@ -114,9 +118,12 @@ $(document).ready(function(){
 		}
 
 		
-   		 console.log("token no usuarios.js - "+ token);
+   console.log("token no usuarios.js - "+ token);
 		
+
+    function carregaListaUsuarios(){
     	//Carrega lista de usuarios
+   
 		$.ajax({
    				
    				url: window.location.href+ 'users',
@@ -130,9 +137,11 @@ $(document).ready(function(){
 			                if(data.success){
 			                  //window.sessionStorage.setItem("token", null);
 			                  console.log(data.message);
-			                  var arr = data.usuarios;
-			                  arr.forEach(iteraListaUsuarios);
+			                 usuarios = data.usuarios;
+                       
+			                  usuarios.forEach(iteraListaUsuarios);
 			                  rows.forEach(addEventoUsuario);
+                        novoUsuario();
 			                }
    							
                  			//console.log(data.message);
@@ -140,30 +149,85 @@ $(document).ready(function(){
                 
    						}
    		});
+  }
 //--------------------criar usuário----------------------------------
 
 	function novoUsuario(){
 		console.log("Entrou no novoUsuario");
 		$("#novo_usuario").click(function(){
-			$.ajax({
-				url: window.location.href+ 'users/new',
-				headers: {
-   							'x-access-token': token,
-   							'index': 'index'},
-   				success: function(data, status){
+       if($("#user").children().length == 0 || $("#user").find("#create_nome").length == 0){
+      			$.ajax({
+      				url: window.location.href+ 'users/new',
+      				headers: {
+         							'x-access-token': token,
+         							'index': 'index'},
+         				success: function(data, status){
+                    
+                      succesUserHtml(data, status);
+                      userAtual = {};
+                      addEventCreateUser();
 
-
-   				}
-			});
-
+         				}
+      			});
+      }
 
 		});
 	}
 
 
-	//destrois todos os componente se o token for invalido
+    function addEventCreateUser(){
+    console.log("Entrou no addEventCreateUser");
+      $("#salvar_usuario").click(function(){
+            userAtual.nome = $("#create_nome").val();
+            userAtual.login = $("#create_login").val();
+            userAtual.senha = $("#create_senha").val();
+            userAtual.nascimento = $("#create_nascimento").val();
+            userAtual.email =  $("#create_nome").val();
+
+            $.ajax({
+                url: window.location.href + "users",
+                headers: {
+                    'x-access-token': token,
+                    'index': 'index'
+                },
+                data: {
+                  nome: userAtual.nome,
+                  login: userAtual.login,
+                  senha: userAtual.senha,
+                  nascimento: userAtual.nascimento,
+                  email: userAtual.email
+                },
+                dataType : 'JSON',
+                success: function(data, status){
+                  console.log("Salvo - "+ data.success);
+                  if(data.success){
+                    $("#msg").text("Usuário salvo com sucesso");
+                    $("#msg").slideDown("slow");
+                    usuarios= [];
+                    deletaListaUsuarios();
+                    carregaListaUsuarios();
+
+                  }
+
+                }
+
+            });
+        });
+    }
+
+	function deletaListaUsuarios(){
+    $("#tabela").empty();
+    var row = $("<tr></tr>").appendTo("#tabela");
+      var nome = $("<th></th>").text("Nome").appendTo(row);
+      var email = $("<th></th>").text("Email").appendTo(row);
+      var nascimento = $("<th></th>").text("Nascimento").appendTo(row);
+      var login = $("<th></th>").text("Login").appendTo(row);
+
+  }
+
+  //destrois todos os componente se o token for invalido
 	function fechaTela(){
-		$()
+	//	$()
 	}
 
 	/*function addEventCreateUser(value, index, array){

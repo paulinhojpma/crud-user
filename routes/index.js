@@ -35,6 +35,24 @@ router.get("/users", function(req, res){
 
   //res.json({success: true, message: "logou"});
 });
+router.post("/users", function(req, res){
+  console.log("Entrou em criar usuário - "+ req.body.nome);
+      var nick = new User({ 
+        nome: req.body.nome,
+        login: req.body.login,
+        senha: req.body.senha,
+        nascimento: new Date(req.body.nascimento),
+        email:  req.body.email    
+      });
+
+      nick.save(function(err) {
+        if (err) throw err;
+
+        console.log('Novo usuário criado');
+        res.json({ success: true });
+      });
+
+});
 
 
 router.get("/users/usersView", function(req, res){
@@ -47,6 +65,10 @@ router.get("/users/userView", function(req,  res){
   res.render("usuario");
 });
 
+router.get("/users/new", function(req, res){
+  console.log("Entrou no new View");
+  res.render("usuarioCreate");
+});
 
 router.get("/users/:id", function(req, res){
   console.log("Entrou no users/:id - "+ req.params.id);
@@ -129,6 +151,8 @@ router.get('/setup', function(req, res) {
     res.json({ success: true });
   });
 });
+
+
 /*
 router.get("/", function(req, res){
     console.log("Entrou no index");
