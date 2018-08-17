@@ -136,12 +136,12 @@ $(document).ready(function(){
                
 			                if(data.success){
 			                  //window.sessionStorage.setItem("token", null);
-			                  console.log(data.message);
-			                 usuarios = data.usuarios;
+			                  	console.log(data.message);
+			                 	usuarios = data.usuarios;
                        
-			                  usuarios.forEach(iteraListaUsuarios);
-			                  rows.forEach(addEventoUsuario);
-                        novoUsuario();
+			                  	usuarios.forEach(iteraListaUsuarios);
+			                  	rows.forEach(addEventoUsuario);
+                        		novoUsuario();
 			                }
    							
                  			//console.log(data.message);
@@ -155,24 +155,25 @@ $(document).ready(function(){
 	function novoUsuario(){
 		console.log("Entrou no novoUsuario");
 		$("#novo_usuario").click(function(){
-       if($("#user").children().length == 0 || $("#user").find("#create_nome").length == 0){
-      			$.ajax({
-      				url: window.location.href+ 'users/new',
-      				headers: {
-         							'x-access-token': token,
-         							'index': 'index'},
-         				success: function(data, status){
-                    
-                      succesUserHtml(data, status);
-                      userAtual = {};
-                      addEventCreateUser();
+       	if($("#user").children().length == 0 || $("#user").find("#create_nome").length == 0){
+  			$.ajax({
+  				url: window.location.href+ 'users/new',
+  				headers: {
+					'x-access-token': token,
+					'index': 'index'},
+     				success: function(data, status){
+                
+	                  succesUserHtml(data, status);
+	                  userAtual = {};
+	                  addEventCreateUser();
 
-         				}
-      			});
+     				}
+  			});
       }
 
 		});
 	}
+
 
 
     function addEventCreateUser(){
@@ -186,10 +187,12 @@ $(document).ready(function(){
 
             $.ajax({
                 url: window.location.href + "users",
+                type : 'POST',
                 headers: {
                     'x-access-token': token,
                     'index': 'index'
                 },
+                contentType: "application/x-www-form-urlencoded",
                 data: {
                   nome: userAtual.nome,
                   login: userAtual.login,

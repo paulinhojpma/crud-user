@@ -9,8 +9,8 @@ var config = require('../config');
 var multer = require('multer'); 
 var upload = multer();
 var app = express();
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(bodyParser.json());
+//router.use(bodyParser.urlencoded({ extended: true }));
+//router.use(bodyParser.json());
 
 mongoose.connect(config.database , { useNewUrlParser: true }); 
 console.log("Global Promise - "+ global.Promise);
@@ -35,7 +35,7 @@ router.get("/users", function(req, res){
 
   //res.json({success: true, message: "logou"});
 });
-router.post("/users", function(req, res){
+router.post("/users",  function(req, res, next){
   console.log("Entrou em criar usuário - "+ req.body.nome);
       var nick = new User({ 
         nome: req.body.nome,

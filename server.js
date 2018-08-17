@@ -9,7 +9,8 @@ var jwt    = require('jsonwebtoken');
 var config = require('./config'); 
 var User   = require('./user'); 
 var indexRouter = require('./routes/index');
-
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.engine('html', require('ejs').renderFile);
 //app.set('views', path.join(__dirname, 'views'));
