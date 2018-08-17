@@ -46,10 +46,13 @@ router.post("/users",  function(req, res, next){
       });
 
       nick.save(function(err) {
-        if (err) throw err;
+        if (err){ 
+          throw err;
+          res.json({ success: false , message: "Usuario não pode ser criado com sucesso"});
+        }
 
         console.log('Novo usuário criado');
-        res.json({ success: true });
+        res.json({ success: true , message: "Usuario "+ req.body.nome+ " criado com sucesso"});
       });
 
 });
@@ -78,6 +81,7 @@ router.get("/users/:id", function(req, res){
       function(err, user){
         console.log("Usuario.retornado - "+user);
         if(err) throw err;
+
         if(user){
           res.json(user);
         }

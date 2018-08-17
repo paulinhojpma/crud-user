@@ -1,11 +1,14 @@
 $(document).ready(function(){
       console.log("------------Carregando usuario.js -----------");
-
-      var userAtual= {};
-    	var usuarios = [];
-    	var rows = [];
-			
+     
       carregaListaUsuarios();
+
+});
+      
+			 var userAtual= {};
+      var usuarios = [];
+      var rows = [];
+      
 
 		  function iteraListaUsuarios(value, index, array){
 			console.log("Nome - "+ value.nome);
@@ -141,7 +144,7 @@ $(document).ready(function(){
                        
 			                  	usuarios.forEach(iteraListaUsuarios);
 			                  	rows.forEach(addEventoUsuario);
-                        		novoUsuario();
+                        	novoUsuario();
 			                }
    							
                  			//console.log(data.message);
@@ -183,7 +186,7 @@ $(document).ready(function(){
             userAtual.login = $("#create_login").val();
             userAtual.senha = $("#create_senha").val();
             userAtual.nascimento = $("#create_nascimento").val();
-            userAtual.email =  $("#create_nome").val();
+            userAtual.email =  $("#create_email").val();
 
             $.ajax({
                 url: window.location.href + "users",
@@ -202,15 +205,22 @@ $(document).ready(function(){
                 },
                 dataType : 'JSON',
                 success: function(data, status){
+                  userAtual= {};
                   console.log("Salvo - "+ data.success);
                   if(data.success){
-                    $("#msg").text("Usuário salvo com sucesso");
-                    $("#msg").slideDown("slow");
-                    usuarios= [];
+                    
+                    
                     deletaListaUsuarios();
                     carregaListaUsuarios();
+                    $("#user").empty();
 
+                  }else{
+
+                    carregarMensagens(data.message);
+                    $("#user").empty()
                   }
+
+                  
 
                 }
 
@@ -228,18 +238,11 @@ $(document).ready(function(){
 
   }
 
-  //destrois todos os componente se o token for invalido
-	function fechaTela(){
-	//	$()
-	}
-
-	/*function addEventCreateUser(value, index, array){
-		console.log("Entrou no addEventCreateUser");
-		value.children("#atualizar_"+index).click(function(){
-
-
-
-		});
-	}*/
+  function fechaTela(){
+      $("#lista").empty();
+      $("#user").empty();
+        userAtual= {};
+        usuarios = [];
+        rows = [];
+  }
 	
-});
