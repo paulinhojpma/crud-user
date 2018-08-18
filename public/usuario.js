@@ -14,9 +14,7 @@ $(document).ready(function(){
 			console.log("Nome - "+ value.nome);
 			var row = $("<tr></tr>").appendTo("#tabela");
 			var nome = $("<td></td>").text(value.nome).appendTo(row);
-			var email = $("<td></td>").text(value.email).appendTo(row);
-			var nascimento = $("<td></td>").text(formatDate(value.nascimento)).appendTo(row);
-			var login = $("<td></td>").text(value.login).appendTo(row);
+			var email = $("<td></td>").text(value.email).appendTo(row);			
 			var atualizar = $("<td></td>").text("atualizar").appendTo(row);
 			var deletar = $("<td></td>").text("deletar").appendTo(row);
 			var mostrar = $("<td></td>").text("mostrar").appendTo(row);
@@ -233,7 +231,8 @@ $(document).ready(function(){
     var row = $("<tr></tr>").appendTo("#tabela");
       var nome = $("<th></th>").text("Nome").appendTo(row);
       var email = $("<th></th>").text("Email").appendTo(row);
-      var nascimento = $("<th></th>").text("Nascimento").appendTo(row);
+      var gen = $("<th></th>").text("Nascimento").appendTo(row);
+      gen.attr("colspan", "3");
       var login = $("<th></th>").text("Login").appendTo(row);
 
   }
