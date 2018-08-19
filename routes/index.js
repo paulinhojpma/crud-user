@@ -48,7 +48,7 @@ router.post("/users",  function(req, res, next){
       nick.save(function(err) {
         if (err){ 
           throw err;
-          res.json({ success: false , message: "Usuario não pode ser criado com sucesso"});
+          res.json({ success: false , message: "Usuario não pode ser criado "});
         }
 
         console.log('Novo usuário criado');
@@ -58,9 +58,56 @@ router.post("/users",  function(req, res, next){
 });
 
 
+
+router.put("/users/:id" , function(req, res){
+  console.log("Entrou em atualizar usuario - "+req.params.id);
+  console.log("Entrou em atualizar usuarioNome - "+req.body.nome);
+  User.findOneAndUpdate({
+    email: req.params.id
+  },
+  req.body,
+  /*{nome: req.body.nome,
+    login: req.body.login,
+    senha: req.body.senha,
+    nascimento: new Date(req.body.nascimento),
+    email: req.body.email},*/
+    {new: true},
+  function(err, data){
+    if(err){
+      throw err;
+      res.status(404).json({success: false, message: "Usuário não pode ser atualizado"});
+    }
+      res.json({success: true, message: "Usuario "+ data.nome+ " atualizado com sucesso", user: data});
+  } 
+
+
+  );
+});
+
+router.delete("/users/:id", function(req, res){
+  console.log("Entrou em deletar usuario - "+req.params.id);
+  User.findOneAndRemove({
+    email: req.params.id
+  }, function(err, data){
+    if(err){
+      throw err;
+      res.status(404).json({success: false, message: "Usuário não pode ser removido"});
+    }
+    res.json({success: true, message: "Usuario "+ data.nome+ " removido com sucesso"});
+  }
+  );
+
+});
+
+router.get("/users/atualizaView", function(req, res){
+  console.log("Entrou no atualizaView"); 
+    res.render("usuarioUpdate");
+
+})
+
 router.get("/users/usersView", function(req, res){
     console.log("Entrou no usersView");      
-      res.render("usuarios");
+    res.render("usuarios");
 });
 
 router.get("/users/userView", function(req,  res){
@@ -79,7 +126,7 @@ router.get("/users/:id", function(req, res){
       email: req.params.id
     },
       function(err, user){
-        console.log("Usuario.retornado - "+user);
+        console.log("Usuario retornado - "+user);
         if(err) throw err;
 
         if(user){

@@ -25,7 +25,7 @@ $(document).ready(function(){
 			rows.push(row);		
 		}
 
-    function succesUserGet(id){      
+    function succesUserGet(id, type = "get"){      
       console.log("Entrou no succesUserGet");
       $.ajax({
             url: window.location.href + "users/"+ id,
@@ -35,7 +35,13 @@ $(document).ready(function(){
               success: function(data, status,){
                   userAtual = data;
                   console.log("Usuario retornado" + userAtual.login);
-                  carregaUsuario();
+                  console.log("Type retornado - " + type);
+	                  if(type == "get"){
+	                  	 	carregaUsuario();
+	                  	}else{
+	                  		carregaUsuario("update");
+	                  	}
+                 
                 
               }
 
@@ -55,9 +61,11 @@ $(document).ready(function(){
 
     }
 
-		function addEventoUsuario(value, index, array){
+	function addEventoUsuario(value, index, array){
 			console.log("Entrou no  addEventoUsuario- "+ value.attr('id'));
 			let id = "#mostrar_"+index;
+		addEventoDeletaUsuario(value, index, array);
+		addEventUpdateUsuario(value, index, array);
       value.children(id).click(function(){
 
 			
@@ -95,12 +103,24 @@ $(document).ready(function(){
 			});
 		}
 
-		function carregaUsuario(){
-			$("#usuario_titulo").text(userAtual.nome);
-			$("#usuario_email").text(userAtual.email);
-      $("#usuario_login").text(userAtual.login);
-			$("#usuario_nascimento").text(formatDate(userAtual.nascimento));
+		function carregaUsuario(type = "get"){
+			if(type == "get"){
+				$("#usuario_titulo").text(userAtual.nome);
+				$("#usuario_email").text(userAtual.email);
+	      		$("#usuario_login").text(userAtual.login);
+				$("#usuario_nascimento").text(formatDate(userAtual.nascimento));
+
+			}else{
+				$("#update_nome").val(userAtual.nome);
+				$("#update_email").val(userAtual.email);
+	      		$("#update_login").val(userAtual.login);
+				$("#update_nascimento").val(userAtual.nascimento);
+				$("#update_senha").val(userAtual.senha);
+			}
+			
 		}
+
+		
 
 
 		function formatDate(date){
@@ -156,21 +176,21 @@ $(document).ready(function(){
 	function novoUsuario(){
 		console.log("Entrou no novoUsuario");
 		$("#novo_usuario").click(function(){
-       	if($("#user").children().length == 0 || $("#user").find("#create_nome").length == 0){
-  			$.ajax({
-  				url: window.location.href+ 'users/new',
-  				headers: {
-					'x-access-token': token,
-					'index': 'index'},
-     				success: function(data, status){
-                
-	                  succesUserHtml(data, status);
-	                  userAtual = {};
-	                  addEventCreateUser();
+		       	if($("#user").children().length == 0 || $("#user").find("#create_nome").length == 0){
+		  			$.ajax({
+		  				url: window.location.href+ 'users/new',
+		  				headers: {
+							'x-access-token': token,
+							'index': 'index'},
+		     				success: function(data, status){
+		                
+			                  succesUserHtml(data, status);
+			                  userAtual = {};
+			                  addEventCreateUser();
 
-     				}
-  			});
-      }
+		     				}
+		  			});
+		      }
 
 		});
 	}
@@ -236,6 +256,122 @@ $(document).ready(function(){
       var login = $("<th></th>").text("Login").appendTo(row);
 
   }
+
+  function addEventoDeletaUsuario(value, index, array){
+  	console.log("Entrou no  addEventoUsuario- "+ value.attr('id'));
+  	let id = "#deletar_"+index;
+  	value.children(id).click(function(){
+  		console.log("Email no escolhido - "+ value.attr('id'));
+  		if(confirm("Deseja remover este usuário?")){
+	  		$.ajax({
+	  			url: window.location.href+ 'users/'+ value.attr('id'),
+				headers: {
+					'x-access-token': token,
+					'index': 'index'},
+				type: "DELETE",
+				success: function(data, status){
+					if(data.success){
+						carregarMensagens(data.message);
+						let remove = "#"+ value.attr('id');
+						$("#deletar_"+index).parent().remove();
+					}else{
+						carregarMensagens(data.message);
+					}
+				}
+
+	  		});
+  		}
+
+  	});
+
+  }
+
+  function addEventUpdateUsuario(value, index, array){
+  	console.log("Entrou no  addEventoUpdateUsuario- "+ value.attr('id'));
+  	let id = "#atualizar_"+index;
+  	value.children(id).click(function(){
+
+  		if($("#user").children().length == 0 || $("#user").find("#update_nome").length == 0){
+  			$.ajax({
+	  			url: window.location.href+ 'users/atualizaView',
+				headers: {
+					'x-access-token': token,
+					'index': 'index'},
+				
+				success: function(data, status){
+						succesUserHtml(data, status);
+						succesUserGet(value.attr('id'), "update");
+						updateUsuario(value.attr('id'), index);
+					/*if(data.success){
+						succesUserHtml(data, status);
+						$("#deletar_"+index).parent().remove();
+					}else{
+						carregarMensagens(data.message);
+					}*/
+				}
+
+	  		});
+  		}else{
+  			succesUserGet(value.attr('id'), "update");
+  		}
+
+
+  	});
+  }
+
+  function updateUsuario(id, index){
+  	console.log("Entrou no  addEventoUpdateUsuario- "+ id);
+  	
+  	$("#atualiza_usuario").click(function(){
+  			userAtual.nome = $("#update_nome").val();
+            userAtual.login = $("#update_login").val();
+            userAtual.senha = $("#update_senha").val();
+            userAtual.nascimento = $("#update_nascimento").val();
+            userAtual.email =  $("#update_email").val();
+            console.log("Nome retorndado apos atualizar - "+ userAtual.nome);
+  			$.ajax({
+	  			url: window.location.href+ 'users/'+id,
+				headers: {
+					'x-access-token': token,
+					'index': 'index'},
+				type: 'PUT',
+				contentType: "application/x-www-form-urlencoded",
+				data: {
+
+                  nome: userAtual.nome,
+                  login: userAtual.login,
+                  senha: userAtual.senha,
+                  nascimento: userAtual.nascimento,
+                  email: userAtual.email
+                },
+				
+				success: function(data, status){
+						
+
+					if(data.success){
+						
+						$("#user").empty();
+						carregarMensagens(data.message);
+						row = $("#atualizar_"+index).parent();
+						console.log("Valor do index - "+ index);
+						console.log("Tamanho da linha - "+ $("#atualizar_"+index).parent().children().eq(0).text());
+						row.children().eq(0).text(data.user.nome);
+						row.children().eq(1).text(data.user.email);
+
+					}else{
+						carregarMensagens(data.message);
+					}
+					userAtual = {};
+				}
+
+	  		});
+
+
+  	});
+  
+
+  }
+
 
   function fechaTela(){
       $("#lista").empty();
