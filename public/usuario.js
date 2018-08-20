@@ -14,14 +14,14 @@ $(document).ready(function(){
 			console.log("Nome - "+ value.nome);
 			var row = $("<tr></tr>").appendTo("#tabela");
 			var nome = $("<td></td>").text(value.nome).appendTo(row);
-			var email = $("<td></td>").text(value.email).appendTo(row);			
+			var email = $("<td></td>").text(value._id).appendTo(row);			
 			var atualizar = $("<td></td>").text("atualizar").appendTo(row);
 			var deletar = $("<td></td>").text("deletar").appendTo(row);
 			var mostrar = $("<td></td>").text("mostrar").appendTo(row);
 			atualizar.attr("id", "atualizar_"+index);
 			deletar.attr("id", "deletar_"+index);
 			mostrar.attr("id", "mostrar_"+index);
-			row.attr("id", value.email);
+			row.attr("id", value._id);
 			rows.push(row);		
 		}
 
@@ -106,13 +106,13 @@ $(document).ready(function(){
 		function carregaUsuario(type = "get"){
 			if(type == "get"){
 				$("#usuario_titulo").text(userAtual.nome);
-				$("#usuario_email").text(userAtual.email);
+				$("#usuario_email").text(userAtual._id);
 	      		$("#usuario_login").text(userAtual.login);
 				$("#usuario_nascimento").text(formatDate(userAtual.nascimento));
 
 			}else{
 				$("#update_nome").val(userAtual.nome);
-				$("#update_email").val(userAtual.email);
+				$("#update_email").val(userAtual._id);
 	      		$("#update_login").val(userAtual.login);
 				$("#update_nascimento").val(userAtual.nascimento);
 				$("#update_senha").val(userAtual.senha);
@@ -234,7 +234,7 @@ $(document).ready(function(){
 
                   }else{
 
-                    carregarMensagens(data.message);
+                    carregarMensagens(data.message, "alert alert-danger");
                     $("#user").empty()
                   }
 
@@ -271,11 +271,11 @@ $(document).ready(function(){
 				type: "DELETE",
 				success: function(data, status){
 					if(data.success){
-						carregarMensagens(data.message);
+						carregarMensagens(data.message, "alert alert-primary");
 						let remove = "#"+ value.attr('id');
 						$("#deletar_"+index).parent().remove();
 					}else{
-						carregarMensagens(data.message);
+						carregarMensagens(data.message, "alert alert-danger");
 					}
 				}
 
@@ -351,15 +351,15 @@ $(document).ready(function(){
 					if(data.success){
 						
 						$("#user").empty();
-						carregarMensagens(data.message);
+						carregarMensagens(data.message, "alert alert-primary");
 						row = $("#atualizar_"+index).parent();
 						console.log("Valor do index - "+ index);
 						console.log("Tamanho da linha - "+ $("#atualizar_"+index).parent().children().eq(0).text());
 						row.children().eq(0).text(data.user.nome);
-						row.children().eq(1).text(data.user.email);
+						row.children().eq(1).text(data.user._id);
 
 					}else{
-						carregarMensagens(data.message);
+						carregarMensagens(data.message, "alert alert-danger");
 					}
 					userAtual = {};
 				}

@@ -37,23 +37,45 @@ router.get("/users", function(req, res){
 });
 router.post("/users",  function(req, res, next){
   console.log("Entrou em criar usuário - "+ req.body.nome);
-      var nick = new User({ 
-        nome: req.body.nome,
-        login: req.body.login,
-        senha: req.body.senha,
-        nascimento: new Date(req.body.nascimento),
-        email:  req.body.email    
-      });
+      User.findOne({$or:[{_id: req.body.email}, {login: req.body.login}]},
+      function(err, data){
+        if(err){
+           res.json({succes: false, message: "Ocorreu um erro"}); 
 
-      nick.save(function(err) {
-        if (err){ 
-          throw err;
-          res.json({ success: false , message: "Usuario não pode ser criado "});
         }
+          if(!data){
+            var nick = new User({ 
+              nome: req.body.nome,
+              login: req.body.login,
+              senha: req.body.senha,
+              nascimento: new Date(req.body.nascimento),
+              _id:  req.body.email    
+            });
 
-        console.log('Novo usuário criado');
-        res.json({ success: true , message: "Usuario "+ req.body.nome+ " criado com sucesso"});
-      });
+            nick.save(function(err) {
+              if (err){ 
+                throw err;
+                res.json({ success: false , message: err});
+              }
+
+              console.log('Novo usuário criado');
+              res.json({ success: true , message: "Usuario "+ req.body.nome+ " criado com sucesso"});
+            });
+          }else{
+            if(data._id == req.body.email){
+               res.json({succes: false, message: "email já cadastrado"});
+            } else{
+              res.json({succes: false, message: "login já cadastrado"});
+            }
+            
+          }        
+          
+
+      }
+
+    );
+     
+     
 
 });
 
@@ -63,7 +85,7 @@ router.put("/users/:id" , function(req, res){
   console.log("Entrou em atualizar usuario - "+req.params.id);
   console.log("Entrou em atualizar usuarioNome - "+req.body.nome);
   User.findOneAndUpdate({
-    email: req.params.id
+    _id: req.params.id
   },
   req.body,
   /*{nome: req.body.nome,
@@ -87,7 +109,7 @@ router.put("/users/:id" , function(req, res){
 router.delete("/users/:id", function(req, res){
   console.log("Entrou em deletar usuario - "+req.params.id);
   User.findOneAndRemove({
-    email: req.params.id
+    _id: req.params.id
   }, function(err, data){
     if(err){
       throw err;
@@ -123,7 +145,7 @@ router.get("/users/new", function(req, res){
 router.get("/users/:id", function(req, res){
   console.log("Entrou no users/:id - "+ req.params.id);
     User.findOne({
-      email: req.params.id
+      _id: req.params.id
     },
       function(err, user){
         console.log("Usuario retornado - "+user);
@@ -131,6 +153,8 @@ router.get("/users/:id", function(req, res){
 
         if(user){
           res.json(user);
+        }else{
+          res.json({succes: false, message: "usuario não encontrado"});
         }
       }
     );
@@ -157,8 +181,8 @@ router.get("/users/verificar/:id", function(req, res){
               res.json({ success: false, message: 'Senha errada.' });
 
             }else{
-                console.log("Usuario encontrado - "+ user.login);
-                res.json({success: true, message: user.email});
+                console.log("Usuario encontrado - "+ user._id);
+                res.json({success: true, message: user._id});
                /*const payload = {
                 email: user.email
               };
@@ -190,7 +214,7 @@ router.get('/setup', function(req, res) {
     login: 'ronaldo',
     senha: 'spcock',
     nascimento: new Date("1978-05-18"),
-    email: 'ronaldo@spock'
+    _id: 'ronaldo@spock'
     
   });
 
