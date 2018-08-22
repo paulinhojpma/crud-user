@@ -9,6 +9,7 @@ var config = require('../config');
 var multer = require('multer'); 
 var upload = multer();
 var app = express();
+var request = require('request');
 //router.use(bodyParser.urlencoded({ extended: true }));
 //router.use(bodyParser.json());
 
@@ -35,6 +36,46 @@ router.get("/users", function(req, res){
 
   //res.json({success: true, message: "logou"});
 });
+
+function criarNovaQeue(login, fn){
+  request({
+    method: "GET",
+    //url: 'https://microservices-crud-user.herokuapp.com/users/verificar/'+ req.body.login,
+    url: 'http://localhost:8090/createQeue/'+ login,
+    
+
+  }).on('data', function(chunk) {
+    console.log("Chunk - " + chunk);
+    var data = JSON.parse(chunk);
+   //console.log(response.statusCode);
+    console.log("resposta do request - "+ data);
+    if(data.success){
+      console.log("Fila gerada - "+ data.urlQeue);
+
+       
+    }else{
+           console.log("Não foi possível gerar a fila");
+    }
+    fn();
+  }).on("error", function(err){
+    console.log("Erro no request");
+    console.log(err);
+  });
+
+
+
+}
+
+router.get("/testaCriaFila", function(req, res){
+      criarNovaQeue("ronaldo", function(){
+
+        res.json({success: true});
+      });
+
+
+});
+
+
 router.post("/users",  function(req, res, next){
   console.log("Entrou em criar usuário - "+ req.body.nome);
       User.findOne({$or:[{_id: req.body.email}, {login: req.body.login}]},

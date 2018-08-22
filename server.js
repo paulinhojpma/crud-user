@@ -3,6 +3,7 @@ var app         = express();
 var bodyParser  = require('body-parser');
 var path = require('path');
 var morgan      = require('morgan');
+var request = require('request');
 //var mongoose    = require('mongoose');
 
 var jwt    = require('jsonwebtoken'); 
@@ -24,7 +25,12 @@ app.use('/', indexRouter);
 
 app.use(morgan('dev'));
 
+if (require.main === module){
+    //inicia o servidor
+    app.listen(port)
+    console.log('API funcionando!')
+}
 
 
-app.listen(port);
+//app.listen(port);
 console.log('Magic happens at http://localhost:' + port);

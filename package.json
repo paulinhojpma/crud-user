@@ -4,6 +4,9 @@
   "repository": {},
   "license": "UNLICENSED",
   "version": "1.0.0",
+  "scripts": {
+    "test": "node index.test"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
@@ -13,6 +16,9 @@
     "mongoose": "^5.2.7",
     "morgan": "^1.9.0",
     "multer": "^1.3.1",
-    "npm": "^6.4.0"
+    "npm": "^6.4.0",
+    "request": "^2.88.0",
+    "supertest": "^3.1.0",
+    "tape": "^4.9.1"
   }
 }
